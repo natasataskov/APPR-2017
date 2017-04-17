@@ -6,22 +6,35 @@ Repozitorij z gradivi pri predmetu APPR v študijskem letu 2016/17
 
 V projektu bom analizirala vpliv zdravstvene ureditve v povezavi s pričakovano življenjsko dobo v posameznih državah. Analizirala bom, kako dejavne so posamezne države na posameznih področjih v zdravstvu, kateri so glavni ponudniki zdravstvenih storitev in kakšna je shema financiranja zdravstva v posameznih državah. Cilj projekta je poiskati, kakšna ureditev zdravstvenega sistema je najbolj optimalna za državo.
 
-V prvi tabeli bom imela v stolpcih leto, državo in spol, v vrsticah pa pričakovano življenjsko dobo.
+Tabela 1: PRIČAKOVANA ŽIVLJENJSKA DOBA
+* stolpec 1: država (niz)
+* stolpec 2: leto (število)
+* stolpec 3: spol (niz)
+* stolpec 4: starost (število)
 
-V drugi tabeli bom imela v stolpcih funkcije zdravstvene nege in države, v vrsticah pa koliko posamezna država nameni denarja za določeno zdravstveno funkcijo.
+Tabela 2: IZDATKI ZA POSAMEZNE FUNKCIJE ZDRAVSTVENE NEGE
+* stolpec 1: država (niz)
+* stolpec 2: leto (število)
+* stolpec 3: funkcija (niz)
 
-V tretji tabeli bom imela v stolpcih napisane države, leto in ponudnike zdravstvenih storitev, v vrsticah pa koliko denarja različne države namenijo zanje v posameznih letih.
+Tabela 3: IZDATKI PONUDNIKOV ZDRAVSTVENIH STORITEV
+* stolpec 1: država (niz)
+* stolpec 2: leto (število)
+* stolpec 3: ponudniki (niz)
 
-V četrti tabeli bom imela v stolpcih države, čas in finančno shemo, v vrsticah pa vrednosti.
+Tabela 4: SHEME FINANCIRANJA ZDRAVSTVENIH STORITEV
+* stolpec 1: država (niz)
+* stolpec 2: leto (število)
+* stolpec 3: sheme financiranja (niz)
 
 Viri:
-http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=demo_mlexpec&lang=en
+* http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=demo_mlexpec&lang=en
 
-http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hc&lang=en
+* http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hc&lang=en
 
-http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hp&lang=en
+* http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hp&lang=en
 
-http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en
+* http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en
 
 ## Program
 
