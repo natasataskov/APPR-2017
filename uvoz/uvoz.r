@@ -1,53 +1,88 @@
-# 2. faza: Uvoz podatkov
+#2. faza: Uvoz podatkov
 
-# Funkcija, ki uvozi občine iz Wikipedije
-uvozi.obcine <- function() {
-  link <- "http://sl.wikipedia.org/wiki/Seznam_ob%C4%8Din_v_Sloveniji"
-  stran <- html_session(link) %>% read_html()
-  tabela <- stran %>% html_nodes(xpath="//table[@class='wikitable sortable']") %>%
-    .[[1]] %>% html_table(dec = ",")
-  colnames(tabela) <- c("obcina", "povrsina", "prebivalci", "gostota", "naselja",
-                        "ustanovitev", "pokrajina", "regija", "odcepitev")
-  tabela$obcina <- gsub("Slovenskih", "Slov.", tabela$obcina)
-  tabela$obcina[tabela$obcina == "Kanal ob Soči"] <- "Kanal"
-  tabela$obcina[tabela$obcina == "Loški potok"] <- "Loški Potok"
-  for (col in colnames(tabela)) {
-    tabela[tabela[[col]] == "-", col] <- NA
-  }
-  for (col in c("povrsina", "prebivalci", "gostota", "naselja", "ustanovitev")) {
-    if (is.numeric(tabela[[col]])) {
-      next()
-    }
-    tabela[[col]] <- gsub("[.*]", "", tabela[[col]]) %>% as.numeric()
-  }
-  for (col in c("obcina", "pokrajina", "regija")) {
-    tabela[[col]] <- factor(tabela[[col]])
-  }
-  return(tabela)
+require("xml2")
+require("xlsx")
+require("dplyr")
+require("readr")
+
+#uvoz 1. tabele: pričakovana življenjska doba
+uvozi.zivljenjska.doba <- function(){
+  pricakovana.zivljenjska.doba <- read_csv("podatki/zivljenjska.doba.csv",
+                                           col_names = c("Čas", "Država", "Spol", "Starost", "Enota", "Vrednost", "Opombe"),
+                                           locale = locale(encoding = "Windows-1250"),
+                                           skip = 1,
+                                           na= c("", ":"))
+  pricakovana.zivljenjska.doba$Enota <- NULL
+  pricakovana.zivljenjska.doba$Opombe <- NULL
+  pricakovana.zivljenjska.doba$Starost <- NULL
+  
+  
+  row.has.na <- apply(pricakovana.zivljenjska.doba, 1, function(x){any(is.na(x))})
+  pricakovana.zivljenjska.doba <- pricakovana.zivljenjska.doba[!row.has.na,]
+  
+  pricakovana.zivljenjska.doba$Država <- as.factor(pricakovana.zivljenjska.doba$Država)
+  pricakovana.zivljenjska.doba$Čas <- as.integer(pricakovana.zivljenjska.doba$Čas)
+  pricakovana.zivljenjska.doba$Spol <- as.factor(pricakovana.zivljenjska.doba$Spol)
+  pricakovana.zivljenjska.doba$Vrednost <- as.numeric(pricakovana.zivljenjska.doba$Vrednost)
+  return(pricakovana.zivljenjska.doba)
 }
 
-# Funkcija, ki uvozi podatke iz datoteke druzine.csv
-uvozi.druzine <- function(obcine) {
-  data <- read_csv2("podatki/druzine.csv", col_names = c("obcina", 1:4),
-                    locale = locale(encoding = "Windows-1250"))
-  data$obcina <- data$obcina %>% strapplyc("^([^/]*)") %>% unlist() %>%
-    strapplyc("([^ ]+)") %>% sapply(paste, collapse = " ") %>% unlist()
-  data$obcina[data$obcina == "Sveti Jurij"] <- "Sveti Jurij ob Ščavnici"
-  data <- data %>% melt(id.vars = "obcina", variable.name = "velikost.druzine",
-                        value.name = "stevilo.druzin")
-  data$velikost.druzine <- as.numeric(data$velikost.druzine)
-  data$obcina <- factor(data$obcina, levels = obcine)
-  return(data)
+pricakovana.zivljenjska.doba <- uvozi.zivljenjska.doba()
+
+
+#uvoz 2. tabele: izdatki za posamezne funkcije zdravstvene nege
+uvoz.funkcije <- function(){
+  funkcije.zdravstvene.nege <- read_csv("podatki/funkcije.csv",
+                                        col_names = c("Čas", "Država","Enota", "Funkcija", "Vrednost", "Opombe"),
+                                        locale = locale(encoding = "Windows-1250"),
+                                        skip = 1,
+                                        na= c("", ":"))
+  funckije.zdravstvene.nege$Enota <- NULL
+  funckije.zdravstvene.nege$Opombe <- NULL
+  
+  
+  row.has.na <- apply(funckije.zdravstvene.nege, 1, function(x){any(is.na(x))})
+  funckije.zdravstvene.nege <- funckije.zdravstvene.nege[!row.has.na,]
+  
+  funckije.zdravstvene.nege$Država <- as.factor(funckije.zdravstvene.nege$Država)
+  funckije.zdravstvene.nege$Čas <- as.integer(funckije.zdravstvene.nege$Čas)
+  funckije.zdravstvene.nege$Funkcija <- as.factor(funckije.zdravstvene.nege$Funkcija)
+  funckije.zdravstvene.nege$Vrednost <- as.numeric(funckije.zdravstvene.nege$Vrednost)
+  return(funkcije.zdravstvene.nege)
 }
 
-# Zapišimo podatke v razpredelnico obcine
-obcine <- uvozi.obcine()
+funkcije.zdravstvene.nege <- uvoz.funkcije()
 
-# Zapišimo podatke v razpredelnico druzine.
-druzine <- uvozi.druzine(levels(obcine$obcina))
+#uvoz 3. tabele: izdatki ponudnikov zdravstvenih storitev
+uvoz.ponudniki <- function(){
+  ponudniki.zdravstvenih.storitev <- read_csv("podatki/ponudniki.csv",
+                                              col_names = c("Čas", "Država","Enota", "Ponudnik", "Vrednost", "Opombe"),
+                                              locale = locale(encoding = "Windows-1250"),
+                                              skip = 1,
+                                              na= c("", ":"))
+  ponudniki.zdravstvenih.storitev$Enota <- NULL
+  ponudniki.zdravstvenih.storitev$Opombe <- NULL
+  
+  
+  row.has.na <- apply(ponudniki.zdravstvenih.storitev, 1, function(x){any(is.na(x))})
+  ponudniki.zdravstvenih.storitev <- ponudniki.zdravstvenih.storitev[!row.has.na,]
+  
+  ponudniki.zdravstvenih.storitev$Država <- as.factor(ponudniki.zdravstvenih.storitev$Država)
+  ponudniki.zdravstvenih.storitev$Čas <- as.integer(ponudniki.zdravstvenih.storitev$Čas)
+  ponudniki.zdravstvenih.storitev$Ponudnik <- as.factor(ponudniki.zdravstvenih.storitev$Ponudnik)
+  ponudniki.zdravstvenih.storitev$Vrednost <- as.numeric(ponudniki.zdravstvenih.storitev$Vrednost)
+  return(ponudniki.zdravstvenih.storitev)
+}
 
-# Če bi imeli več funkcij za uvoz in nekaterih npr. še ne bi
-# potrebovali v 3. fazi, bi bilo smiselno funkcije dati v svojo
-# datoteko, tukaj pa bi klicali tiste, ki jih potrebujemo v
-# 2. fazi. Seveda bi morali ustrezno datoteko uvoziti v prihodnjih
-# fazah.
+ponudniki.zdravstvenih.storitev <- uvoz.ponudniki()
+
+#uvoz 4. tabele: Sheme financiranja zdravstvenih storitev
+link <- "http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en"
+stran <- html_session(link) %>% read_html()
+
+tabela <- stran %>% html_nodes(xpath="//table[@class='wikitable sortable']") %>%
+  .[[1]] %>% html_table(dec = ",")
+
+colnames(tabela) <- c("Čas", "Država", "Enota", "Sheme financiranja", "Vrednost", "Opombe")
+
+
