@@ -1,9 +1,10 @@
 #2. faza: Uvoz podatkov
 
 require("xml2")
-require("xlsx")
+require("readxl")
 require("dplyr")
 require("readr")
+require("tibble")
 
 #uvoz 1. tabele: pričakovana življenjska doba
 uvozi.zivljenjska.doba <- function(){
@@ -30,8 +31,6 @@ uvozi.zivljenjska.doba <- function(){
 pricakovana.zivljenjska.doba <- uvozi.zivljenjska.doba()
 
 
-<<<<<<< HEAD
-=======
 #uvoz 2. tabele: izdatki za posamezne funkcije zdravstvene nege
 uvoz.funkcije <- function(){
   funkcije.zdravstvene.nege <- read_csv("podatki/funkcije.csv",
@@ -39,7 +38,7 @@ uvoz.funkcije <- function(){
                                         locale = locale(encoding = "Windows-1250"),
                                         skip = 1,
                                         na= c("", ":"))
-  funckije.zdravstvene.nege$Enota <- NULL
+  funkcije.zdravstvene.nege$Enota <- NULL
   funckije.zdravstvene.nege$Opombe <- NULL
   
   
@@ -88,4 +87,3 @@ tabela <- stran %>% html_nodes(xpath="//table[@class='wikitable sortable']") %>%
 colnames(tabela) <- c("Čas", "Država", "Enota", "Sheme financiranja", "Vrednost", "Opombe")
 
 
->>>>>>> b083c2937f75de93774be16266d88e93aa1af1d6
