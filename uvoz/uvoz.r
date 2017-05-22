@@ -1,6 +1,5 @@
 #2. faza: Uvoz podatkov
 
-require("xml2")
 require("readxl")
 require("dplyr")
 require("readr")
