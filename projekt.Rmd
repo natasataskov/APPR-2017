@@ -22,6 +22,7 @@ source("lib/libraries.r", encoding = "UTF-8")
 # Izbira teme
 
 V svojem projektu bom analizirala vpliv zdravstvene ureditve v povezavi s pričakovano življenjsko dobo v posameznih državah. Analizirala bom, kako dejavne so posamezne države na posameznih področjih v zdravstvu, kateri so glavni ponudniki zdravstvenih storitev in kakšna je shema financiranja zdravstva v posameznih državah. Cilj projekta je poiskati, kakšna ureditev zdravstvenega sistema je najbolj optimalna za državo.
+<<<<<<< HEAD
 
 Tabela 1: PRIČAKOVANA ŽIVLJENJSKA DOBA
 
@@ -58,6 +59,8 @@ Viri:
 
 *  http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en
 
+=======
+>>>>>>> 4d3397636ba39ad6e2995ca3c342ab9a97181204
 
 ***
 
@@ -67,8 +70,12 @@ Viri:
 source("uvoz/uvoz.r", encoding = "UTF-8")
 ```
 
+<<<<<<< HEAD
 Podatke o pričakovani življenjski dobi, o izdatkih za posamezne funkcije zdravstvene nege, izdatkih ponidnikov zdravstvenih storitev in shemi financiranja zdravstvenih storitev sem uvozila iz Eurostata. Prve tri tabele sem uvozila v obliki CSV zadnjo tabelo pa v obliki HTML.
 
+=======
+Podatke o pričakovani življenjski dobi, o izdatkih za posamezne funkcije zdravstvene nege, izdatkih ponidnikov zdravstvenih storitev in shemi financiranja zdravstvenih storitev sem uvozila iz Eurostata. Prve tri tabele sem uvozila v obliki .csv, zadnjo tabelo pa v obliki .html.
+>>>>>>> 4d3397636ba39ad6e2995ca3c342ab9a97181204
 
 ```{r razpredelnice}
 kable(head(pricakovana.zivljenjska.doba))
