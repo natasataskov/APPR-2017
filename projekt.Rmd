@@ -21,7 +21,43 @@ source("lib/libraries.r", encoding = "UTF-8")
 
 # Izbira teme
 
-Za vzorec bomo prikazali nekaj podatkov o slovenskih občinah.
+V svojem projektu bom analizirala vpliv zdravstvene ureditve v povezavi s pričakovano življenjsko dobo v posameznih državah. Analizirala bom, kako dejavne so posamezne države na posameznih področjih v zdravstvu, kateri so glavni ponudniki zdravstvenih storitev in kakšna je shema financiranja zdravstva v posameznih državah. Cilj projekta je poiskati, kakšna ureditev zdravstvenega sistema je najbolj optimalna za državo.
+
+Tabela 1: PRIČAKOVANA ŽIVLJENJSKA DOBA
+
+*  stolpec 1: država (niz)
+*  stolpec 2: leto (število)
+*  stolpec 3: spol (niz)
+*  stolpec 4: starost (število)
+
+Tabela 2: IZDATKI ZA POSAMEZNE FUNKCIJE ZDRAVSTVENE NEGE
+
+*  stolpec 1: država (niz)
+*  stolpec 2: leto (število)
+*  stolpec 3: funkcija (niz)
+
+Tabela 3: IZDATKI PONUDNIKOV ZDRAVSTVENIH STORITEV
+
+*  stolpec 1: država (niz)
+*  stolpec 2: leto (število)
+*  stolpec 3: ponudniki (niz)
+
+Tabela 4: SHEME FINANCIRANJA ZDRAVSTVENIH STORITEV
+
+*  stolpec 1: država (niz)
+*  stolpec 2: leto (število)
+*  stolpec 3: sheme financiranja (niz)
+
+Viri:
+
+*  http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=demo_mlexpec&lang=en
+
+*  http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hc&lang=en
+
+*  http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hp&lang=en
+
+*  http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en
+
 
 ***
 
@@ -31,12 +67,21 @@ Za vzorec bomo prikazali nekaj podatkov o slovenskih občinah.
 source("uvoz/uvoz.r", encoding = "UTF-8")
 ```
 
-Uvozili smo podatke o občinah v obliki CSV s statističnega urada ter v obliki HTML
-z Wikipedije. Poglejmo si začetka obeh uvoženih razpredelnic.
+Podatke o pričakovani življenjski dobi, o izdatkih za posamezne funkcije zdravstvene nege, izdatkih ponidnikov zdravstvenih storitev in shemi financiranja zdravstvenih storitev sem uvozila iz Eurostata. Prve tri tabele sem uvozila v obliki CSV zadnjo tabelo pa v obliki HTML.
+
 
 ```{r razpredelnice}
-kable(head(druzine))
-head(obcine)
+kable(head(pricakovana.zivljenjska.doba))
+head(pricakovana.zivljenjska.doba)
+
+kable(head(funkcije.zdravstvene.nege))
+head(funkcije.zdravstvene.nege)
+
+kable(head(ponudniki.zdravstvenih.storitev))
+head(ponudniki.zdravstvenih.storitev)
+
+#kable(head(sheme.financiranja))
+#head(sheme.financiranja)
 ```
 
 Slika \ref{fig:histogram} prikazuje porazdelitev števila naselij v občinah.
@@ -54,14 +99,29 @@ ggplot(obcine, aes(x = naselja)) + geom_histogram() +
 source("vizualizacija/vizualizacija.r", encoding = "UTF-8")
 ```
 
-Slika \ref{fig:zemljevid} prikazuje povprečno velikost družine za vsako občino.
+Slika \ref{fig:zemljevid} prikazuje pričakovano življenjsko dobo za posamezno državo v letu 2015.
 
-```{r zemljevid, echo=FALSE, fig.align='center', fig.cap='Zemljevid povprečnega števila otrok v družini'}
-ggplot() + geom_polygon(data = left_join(zemljevid, povprecja, by = c("OB_UIME" = "obcina")),
-                        aes(x = long, y = lat, group = group, fill = povprecje)) +
-  ggtitle("Povprečno število otrok v družini") + xlab("") + ylab("") +
-  guides(fill = guide_colorbar(title = "Povprečje"))
+```{r zemljevid, echo=FALSE, fig.align='center', fig.cap='Zemljevid pričakovane življenjske dobe.'}
+ggplot() + geom_polygon(data = evropa %>% left_join(pricakovana.zivljenjska.doba %>%
+                                                      filter(Cas == 2015, Spol == "Total"),
+                                                    by = c("name_long" = "Drzava")),
+                        aes(x = long, y = lat, group = group, fill = Vrednost)) +
+  coord_map(xlim = c(-25, 45), ylim = c(32, 72))
 ```
+
+
+Slika \ref{fig:zemljevid} prikazuje, za katero skupino funkcij zdravstvenih storitev so posamezne države namenile največ denarja.
+
+```{r zemljevid, echo=FALSE, fig.align='center', fig.cap='Zemljevid funkcij zdravstvene nege.'}
+ggplot() + geom_polygon(data = evropa %>% left_join(funkcije.zdravstvene.nege %>%
+                                                                            filter(Cas == 2015, Spol == "Total"),
+                                                                          by = c("name_long" = "Drzava")),
+                                              summarise(funkcija = max(Funkcija)),
+                                              aes(x = long, y = lat, group = group, fill = Vrednost)) +
+  coord_map(xlim = c(-25, 45), ylim = c(32, 72))
+
+```
+
 
 ***
 
