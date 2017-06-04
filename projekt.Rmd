@@ -83,19 +83,12 @@ head(ponudniki.zdravstvenih.storitev)
 #head(sheme.financiranja)
 ```
 
-Slika \ref{fig:histogram} prikazuje porazdelitev števila naselij v občinah.
-
-```{r histogram, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Histogram števila naselij v občinah'}
-ggplot(obcine, aes(x = naselja)) + geom_histogram() +
-  ggtitle("Pogostost števila naselij") + xlab("Število naselij") + ylab("Število občin")
-```
-
 ***
 
 # Analiza in vizualizacija podatkov
 
 ```{r vizualizacija, echo=FALSE, message=FALSE}
-source("vizualizacija/vizualizacija.r", encoding = "UTF-8")
+source("vizualizacija/zemljevid.R", encoding = "UTF-8")
 ```
 
 Slika \ref{fig:zemljevid} prikazuje pričakovano življenjsko dobo za posamezno državo v letu 2015.
@@ -111,39 +104,12 @@ ggplot() + geom_polygon(data = evropa %>% left_join(pricakovana.zivljenjska.doba
 
 Slika \ref{fig:zemljevid} prikazuje, za katero skupino funkcij zdravstvenih storitev so posamezne države namenile največ denarja.
 
-```{r zemljevid, echo=FALSE, fig.align='center', fig.cap='Zemljevid funkcij zdravstvene nege.'}
-ggplot() + geom_polygon(data = evropa %>% left_join(funkcije.zdravstvene.nege %>%
-                                                                            filter(Cas == 2015, Spol == "Total"),
-                                                                          by = c("name_long" = "Drzava")),
-                                              summarise(funkcija = max(Funkcija)),
-                                              aes(x = long, y = lat, group = group, fill = Vrednost)) +
+```{r zem, echo=FALSE, fig.align='center', fig.cap='Zemljevid funkcij zdravstvene nege.'}
+ggplot() + geom_polygon(data = evropa %>%
+                          left_join(funkcije.zdravstvene.nege %>%
+                                      filter(Cas == 2014) %>%
+                                      group_by(Drzava) %>% top_n(1, Vrednost),
+                                    by = c("name_long" = "Drzava")),
+                        aes(x = long, y = lat, group = group, fill = Funkcija)) +
   coord_map(xlim = c(-25, 45), ylim = c(32, 72))
-
-```
-
-
-***
-
-# Napredna analiza podatkov
-
-```{r analiza, echo=FALSE, message=FALSE}
-source("analiza/analiza.r", encoding = "UTF-8")
-```
-
-Slika \ref{fig:graf} prikazuje povezavo med številom naselij in površino občine.
-
-```{r graf, echo=FALSE, fig.align='center', fig.cap='Povezava med številom naselij in površino občine'}
-ggplot(inner_join(obcine, data.frame(obcina = names(skupine),
-                                     skupina = factor(skupine)), by = "obcina")
-, aes(x = povrsina, y = naselja, color = skupina, size = prebivalci/1000)) + geom_point() +
-  ggtitle("Število naselij glede na površino občine") +
-  xlab(expression("Površina (km"^2 * ")")) + ylab("Št. naselij") +
-  guides(color = guide_legend(title = "Skupina"),
-         size = guide_legend(title = "Prebivalci (* 1000)"))
-```
-
-***
-
-```{r shiny, echo = FALSE}
-shinyAppDir("shiny", options=list(width="100%", height=600))
 ```
