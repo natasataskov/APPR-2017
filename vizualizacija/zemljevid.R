@@ -11,3 +11,17 @@ evropa <- uvozi.zemljevid("http://www.naturalearthdata.com/http//www.naturaleart
                                   long > -30, sovereignt != "Russia")
 
 
+#pricakovana zivljenjska doba za posamezno drzavo v letu 2015
+ggplot() + geom_polygon(data = evropa %>% left_join(pricakovana.zivljenjska.doba %>%
+                                                      filter(Cas == 2015, Spol == "Total"),
+                                                    by = c("name_long" = "Drzava")),
+                        aes(x = long, y = lat, group = group, fill = Vrednost)) +
+  coord_map(xlim = c(-25, 45), ylim = c(32, 72))
+
+#za katero funkcijo posamezna drzava nameni najvec denarja
+ggplot() + geom_polygon(data = evropa %>% left_join(funkcije.zdravstvene.nege %>%
+                                                                            filter(Cas == 2015, Spol == "Total"),
+                                                                          by = c("name_long" = "Drzava")),
+                                              summarise(funkcija = max(Funkcija)),
+                                              aes(x = long, y = lat, group = group, fill = Vrednost)) +
+  coord_map(xlim = c(-25, 45), ylim = c(32, 72))
