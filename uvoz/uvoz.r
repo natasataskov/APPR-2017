@@ -4,50 +4,38 @@ require("readxl")
 require("dplyr")
 require("readr")
 require("tibble")
+require("tidyr")
 
-#uvoz 1. tabele: pričakovana življenjska doba
-uvozi.zivljenjska.doba <- function(){
+#uvoz 1. tabele: pricakovana zivljenjska doba
+uvoz.zivljenjska.doba <- function(){
   pricakovana.zivljenjska.doba <- read_csv("podatki/zivljenjska.doba.csv",
-                                           col_names = c("Čas", "Država", "Spol", "Starost", "Enota", "Vrednost", "Opombe"),
-                                           locale = locale(encoding = "Windows-1250"),
-                                           skip = 1,
-                                           na= c("", ":"))
-  pricakovana.zivljenjska.doba$Enota <- NULL
-  pricakovana.zivljenjska.doba$Opombe <- NULL
-  pricakovana.zivljenjska.doba$Starost <- NULL
+                                        col_names = c("Cas", "Drzava", "Spol", "Starost", "Enota", "Vrednost", "Opombe"),
+                                        locale = locale(encoding = "Windows-1250"),
+                                        skip = 1,
+                                        na= c("", ":")) %>% select(-Enota, -Opombe, -Starost) %>% drop_na()
   
-  
-  row.has.na <- apply(pricakovana.zivljenjska.doba, 1, function(x){any(is.na(x))})
-  pricakovana.zivljenjska.doba <- pricakovana.zivljenjska.doba[!row.has.na,]
-  
-  pricakovana.zivljenjska.doba$Država <- as.factor(pricakovana.zivljenjska.doba$Država)
-  pricakovana.zivljenjska.doba$Čas <- as.integer(pricakovana.zivljenjska.doba$Čas)
-  pricakovana.zivljenjska.doba$Spol <- as.factor(pricakovana.zivljenjska.doba$Spol)
-  pricakovana.zivljenjska.doba$Vrednost <- as.numeric(pricakovana.zivljenjska.doba$Vrednost)
+  #pricakovana.zivljenjska.doba$Drzava <- as.factor(pricakovana.zivljenjska.doba$Drzava)
+  #pricakovana.zivljenjska.doba$Cas <- as.integer(pricakovana.zivljenjska.doba$Cas)
+  #pricakovana.zivljenjska.doba$Spol <- as.factor(pricakovana.zivljenjska.doba$Spol)
+  #pricakovana.zivljenjska.doba$Vrednost <- as.numeric(pricakovana.zivljenjska.doba$Vrednost)
   return(pricakovana.zivljenjska.doba)
 }
 
-pricakovana.zivljenjska.doba <- uvozi.zivljenjska.doba()
+pricakovana.zivljenjska.doba <- uvoz.zivljenjska.doba()
 
 
 #uvoz 2. tabele: izdatki za posamezne funkcije zdravstvene nege
 uvoz.funkcije <- function(){
   funkcije.zdravstvene.nege <- read_csv("podatki/funkcije.csv",
-                                        col_names = c("Čas", "Država","Enota", "Funkcija", "Vrednost", "Opombe"),
+                                        col_names = c("Cas", "Drzava","Enota", "Funkcija", "Vrednost", "Opombe"),
                                         locale = locale(encoding = "Windows-1250"),
                                         skip = 1,
-                                        na= c("", ":"))
-  funkcije.zdravstvene.nege$Enota <- NULL
-  funckije.zdravstvene.nege$Opombe <- NULL
+                                        na= c("", ":")) %>% select(-Enota, -Opombe) %>% drop_na()
   
-  
-  row.has.na <- apply(funckije.zdravstvene.nege, 1, function(x){any(is.na(x))})
-  funckije.zdravstvene.nege <- funckije.zdravstvene.nege[!row.has.na,]
-  
-  funckije.zdravstvene.nege$Država <- as.factor(funckije.zdravstvene.nege$Država)
-  funckije.zdravstvene.nege$Čas <- as.integer(funckije.zdravstvene.nege$Čas)
-  funckije.zdravstvene.nege$Funkcija <- as.factor(funckije.zdravstvene.nege$Funkcija)
-  funckije.zdravstvene.nege$Vrednost <- as.numeric(funckije.zdravstvene.nege$Vrednost)
+  funkcije.zdravstvene.nege$Drzava <- as.factor(funkcije.zdravstvene.nege$Drzava)
+  funkcije.zdravstvene.nege$Cas <- as.integer(funkcije.zdravstvene.nege$Cas)
+  funkcije.zdravstvene.nege$Funkcija <- as.factor(funkcije.zdravstvene.nege$Funkcija)
+  funkcije.zdravstvene.nege$Vrednost <- as.numeric(funkcije.zdravstvene.nege$Vrednost)
   return(funkcije.zdravstvene.nege)
 }
 
@@ -56,19 +44,13 @@ funkcije.zdravstvene.nege <- uvoz.funkcije()
 #uvoz 3. tabele: izdatki ponudnikov zdravstvenih storitev
 uvoz.ponudniki <- function(){
   ponudniki.zdravstvenih.storitev <- read_csv("podatki/ponudniki.csv",
-                                              col_names = c("Čas", "Država","Enota", "Ponudnik", "Vrednost", "Opombe"),
-                                              locale = locale(encoding = "Windows-1250"),
-                                              skip = 1,
-                                              na= c("", ":"))
-  ponudniki.zdravstvenih.storitev$Enota <- NULL
-  ponudniki.zdravstvenih.storitev$Opombe <- NULL
+                                      col_names = c("Cas", "Drzava","Enota", "Ponudnik", "Vrednost", "Opombe"),
+                                      locale = locale(encoding = "Windows-1250"),
+                                      skip = 1,
+                                      na= c("", ":")) %>% select(-Enota, -Opombe) %>% drop_na()
   
-  
-  row.has.na <- apply(ponudniki.zdravstvenih.storitev, 1, function(x){any(is.na(x))})
-  ponudniki.zdravstvenih.storitev <- ponudniki.zdravstvenih.storitev[!row.has.na,]
-  
-  ponudniki.zdravstvenih.storitev$Država <- as.factor(ponudniki.zdravstvenih.storitev$Država)
-  ponudniki.zdravstvenih.storitev$Čas <- as.integer(ponudniki.zdravstvenih.storitev$Čas)
+  ponudniki.zdravstvenih.storitev$Drzava <- as.factor(ponudniki.zdravstvenih.storitev$Drzava)
+  ponudniki.zdravstvenih.storitev$Cas <- as.integer(ponudniki.zdravstvenih.storitev$Cas)
   ponudniki.zdravstvenih.storitev$Ponudnik <- as.factor(ponudniki.zdravstvenih.storitev$Ponudnik)
   ponudniki.zdravstvenih.storitev$Vrednost <- as.numeric(ponudniki.zdravstvenih.storitev$Vrednost)
   return(ponudniki.zdravstvenih.storitev)
@@ -77,12 +59,19 @@ uvoz.ponudniki <- function(){
 ponudniki.zdravstvenih.storitev <- uvoz.ponudniki()
 
 #uvoz 4. tabele: Sheme financiranja zdravstvenih storitev
+require("httr")
+library("httr")
 link <- "http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en"
-stran <- html_session(link) %>% read_html()
+stran <- html_session(link) %>% content(as = "text")
+drzave <- stran %>% strapplyc('var yValues="([^"]+)"') %>% unlist() %>%
+  strapplyc("\\|([^|]+)\\|\\|") %>% unlist()
 
-tabela <- stran %>% html_nodes(xpath="//table[@class='wikitable sortable']") %>%
-  .[[1]] %>% html_table(dec = ",")
-
-colnames(tabela) <- c("Čas", "Država", "Enota", "Sheme financiranja", "Vrednost", "Opombe")
-
-
+leta <- stran %>% strapplyc('var xValues="([^"]+)"') %>% unlist() %>%
+  strapplyc("\\|TIME([0-9]+)\\|") %>% unlist() %>% parse_number()
+data <- stran %>% strapplyc('var dataValues="([^"]+)"') %>% unlist() %>%
+  strapplyc("([^|]+)\\|") %>% unlist() %>%
+  parse_number(na = c(":", "(p):", "(d):"),
+               locale = locale(decimal_mark = ".", grouping_mark = ","))
+tab <- data.frame(drzava = matrix(drzave, byrow = TRUE,
+                                  nrow = length(leta), ncol = length(drzave)) %>% as.vector(),
+                  leto = leta, vrednost = data)
