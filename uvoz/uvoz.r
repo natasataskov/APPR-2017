@@ -62,7 +62,7 @@ ponudniki.zdravstvenih.storitev <- uvoz.ponudniki()
 require("httr")
 library("httr")
 link <- "http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=hlth_sha11_hf&lang=en"
-stran <- html_session(link) %>% content(as = "text")
+stran <- POST(link) %>% content(as = "text")
 drzave <- stran %>% strapplyc('var yValues="([^"]+)"') %>% unlist() %>%
   strapplyc("\\|([^|]+)\\|\\|") %>% unlist()
 
